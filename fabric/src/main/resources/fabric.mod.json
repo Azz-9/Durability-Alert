@@ -8,8 +8,8 @@
         "${mod_author}"
     ],
     "contact": {
-        "homepage": "https://fabricmc.net/",
-        "sources": "https://github.com/FabricMC/fabric-example-mod"
+        "issues": "https://github.com/Azz-9/Durability-Alert/issues",
+        "sources": "https://github.com/Azz-9/Durability-Alert"
     },
     "license": "${license}",
     "icon": "${mod_id}.png",
