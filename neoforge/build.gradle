@@ -3,6 +3,23 @@ plugins {
     id 'net.neoforged.moddev'
 }
 
+final def includeClothConfig = project.hasProperty("launch_with_cloth_config") && project.launch_with_cloth_config.toBoolean()
+
+repositories {
+    maven {
+        name = "shedaniel"
+        url = "https://maven.shedaniel.me/"
+    }
+}
+
+dependencies {
+    if (includeClothConfig) {
+        implementation("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
+    } else {
+        compileOnly("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")
+    }
+}
+
 neoForge {
     version = neoforge_version
     // Automatically enable neoforge AccessTransformers if the file exists
@@ -18,18 +35,6 @@ neoForge {
         client {
             client()
             gameDirectory = this.mkdir(this.file('runs/client'))
-        }
-        data {
-            clientData()
-            gameDirectory = this.mkdir(this.file('runs/data'))
-            // DataGen can be run by - "./gradlew :neoforge:runData" in Terminal.
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-        }
-        server {
-            server()
-            this.file('runs/server').createParentDirectories()
-            gameDirectory = this.mkdir(this.file('runs/server'))
         }
     }
     mods {

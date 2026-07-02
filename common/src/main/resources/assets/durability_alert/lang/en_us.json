@@ -1,0 +1,22 @@
+{
+  "durability_alert.message": "⚠ %s durability low!",
+  "durability_alert.alert_type.sound": "Sound",
+  "durability_alert.alert_type.message": "Message",
+  "durability_alert.alert_type.sound_and_message": "Sound and message",
+  "durability_alert.list_type.whitelist": "Whitelist",
+  "durability_alert.list_type.blacklist": "Blacklist",
+  "durability_alert.toast.missing_cloth_config.title": "Missing cloth config",
+  "durability_alert.toast.missing_cloth_config.message": "Cloth config is required to open the config screen",
+  "durability_alert.config.title": "Durability alert config",
+  "durability_alert.config.category.general": "General",
+  "durability_alert.config.enabled": "Enable the mod",
+  "durability_alert.config.threshold": "Alert threshold",
+  "durability_alert.config.alert_type": "Alert type",
+  "durability_alert.config.sound": "Sound",
+  "durability_alert.config.check_armor_pieces": "Check armor pieces durability",
+  "durability_alert.config.check_elytra_only": "Check elytra durability only",
+  "durability_alert.config.min_alert_interval": "Min alert interval seconds",
+  "durability_alert.config.list_type": "List type",
+  "durability_alert.config.item_list": "Item list",
+  "durability_alert.config.item_list.invalid_item": "Invalid item"
+}

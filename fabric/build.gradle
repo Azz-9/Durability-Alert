@@ -2,10 +2,37 @@ plugins {
     id 'multiloader-loader'
     id 'net.fabricmc.fabric-loom'
 }
+
+final def includeModMenu = project.hasProperty("launch_with_modmenu") && project.launch_with_modmenu.toBoolean()
+final def includeClothConfig = project.hasProperty("launch_with_cloth_config") && project.launch_with_cloth_config.toBoolean()
+
+repositories {
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven {
+        name = "shedaniel"
+        url = "https://maven.shedaniel.me/"
+    }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:${minecraft_version}")
     implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
     implementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
+
+    if (includeModMenu) {
+        implementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+    } else {
+        compileOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
+    }
+
+    if (includeClothConfig) {
+        implementation("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}")
+    } else {
+        compileOnly("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}")
+    }
 }
 
 loom {
@@ -20,18 +47,12 @@ loom {
             ideConfigGenerated(true)
             runDir('runs/client')
         }
-        server {
-            server()
-            setConfigName('Fabric Server')
-            ideConfigGenerated(true)
-            runDir('runs/server')
-        }
     }
 }
 
 // Implement mcgradleconventions loader attribute
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
-['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'includeInternal', 'modCompileClasspath'].each { variant ->
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements', 'modCompileClasspath'].each { variant ->
     configurations.named(variant) {
         attributes {
             attribute(loaderAttribute, 'fabric')
