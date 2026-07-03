@@ -1,11 +1,5 @@
 package me.Azz_9.durability_alert.compat;
 
-import me.Azz_9.durability_alert.Config;
-import me.shedaniel.clothconfig2.api.ConfigBuilder;
-import me.shedaniel.clothconfig2.api.ConfigCategory;
-import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.gui.entries.*;
-import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -14,6 +8,13 @@ import net.minecraft.sounds.SoundEvents;
 
 import java.util.ArrayList;
 import java.util.Optional;
+
+import me.Azz_9.durability_alert.Config;
+import me.shedaniel.clothconfig2.api.ConfigBuilder;
+import me.shedaniel.clothconfig2.api.ConfigCategory;
+import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import me.shedaniel.clothconfig2.gui.entries.*;
+import me.shedaniel.clothconfig2.impl.builders.DropdownMenuBuilder;
 
 public class ClothConfigCompat {
 
@@ -61,7 +62,7 @@ public class ClothConfigCompat {
         DropdownBoxEntry<Identifier> soundEntry = entryBuilder
                 .startDropdownMenu(
                         Component.translatable("durability_alert.config.sound"),
-                        DropdownMenuBuilder.TopCellElementBuilder.of(SoundEvents.ANVIL_LAND.location(), string -> {
+						DropdownMenuBuilder.TopCellElementBuilder.of(Config.INSTANCE.sound.location(), string -> {
                             try {
                                 Identifier identifier = Identifier.parse(string);
                                 if (BuiltInRegistries.SOUND_EVENT.getOptional(identifier).isPresent()) {
