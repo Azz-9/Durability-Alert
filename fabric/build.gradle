@@ -20,7 +20,6 @@ repositories {
 dependencies {
     minecraft("com.mojang:minecraft:${minecraft_version}")
     implementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
-    implementation("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
 
     if (includeModMenu) {
         implementation("com.terraformersmc:modmenu:${project.modmenu_version}")
