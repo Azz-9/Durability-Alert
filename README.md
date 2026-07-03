@@ -25,7 +25,8 @@ Receive a sound and/or message alert when your gear drops below a configurable d
 
 ## Installation
 
-1. Download the jar for your loader from [Modrinth](https://modrinth.com/project/durability_alert) or [CurseForge](#)
+1. Download the jar for your loader from [Modrinth](https://modrinth.com/project/durability_alert)
+   or [CurseForge](https://www.curseforge.com/minecraft/mc-mods/durabilityalert)
 2. Drop it into your `mods/` folder
 
 **Optional but recommended:**
