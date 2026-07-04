@@ -14,7 +14,7 @@
   "durability_alert.config.alert_type": "Type d'alerte",
   "durability_alert.config.sound": "Sound",
   "durability_alert.config.check_armor_pieces": "Vérifier la durabilité des pièces d'armure",
-  "durability_alert.config.check_elytra_only": "Vérifier uniquement la durabilité de l'elytre",
+	"durability_alert.config.check_elytra_only": "Ne pas vérifier les pièces d'armure, à l'exception des élytres",
   "durability_alert.config.min_alert_interval": "Interval d'alerte minimum en secondes",
   "durability_alert.config.list_type": "Type de liste",
   "durability_alert.config.item_list": "Liste d'items",

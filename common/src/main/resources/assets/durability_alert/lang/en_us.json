@@ -14,7 +14,7 @@
   "durability_alert.config.alert_type": "Alert type",
   "durability_alert.config.sound": "Sound",
   "durability_alert.config.check_armor_pieces": "Check armor pieces durability",
-  "durability_alert.config.check_elytra_only": "Check elytra durability only",
+	"durability_alert.config.check_elytra_only": "Don't check armor pieces except for elytra",
   "durability_alert.config.min_alert_interval": "Min alert interval seconds",
   "durability_alert.config.list_type": "List type",
   "durability_alert.config.item_list": "Item list",
