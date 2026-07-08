@@ -5,13 +5,6 @@ plugins {
 
 final def includeClothConfig = project.hasProperty("launch_with_cloth_config") && project.launch_with_cloth_config.toBoolean()
 
-repositories {
-    maven {
-        name = "shedaniel"
-        url = "https://maven.shedaniel.me/"
-    }
-}
-
 dependencies {
     if (includeClothConfig) {
         implementation("me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}")

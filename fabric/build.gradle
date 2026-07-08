@@ -11,10 +11,6 @@ repositories {
         name = "Terraformers"
         url = "https://maven.terraformersmc.com/"
     }
-    maven {
-        name = "shedaniel"
-        url = "https://maven.shedaniel.me/"
-    }
 }
 
 dependencies {
