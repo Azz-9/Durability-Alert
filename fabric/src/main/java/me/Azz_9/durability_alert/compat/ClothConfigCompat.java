@@ -81,6 +81,26 @@ public class ClothConfigCompat {
                 .setSaveConsumer(value -> Config.INSTANCE.sound = BuiltInRegistries.SOUND_EVENT.getValue(value))
                 .build();
 
+		FloatListEntry pitchEntry = entryBuilder
+				.startFloatField(
+						Component.translatable("durability_alert.config.pitch"),
+						Config.INSTANCE.pitch
+				)
+				.setDefaultValue(2)
+				.setSaveConsumer(aFloat -> Config.INSTANCE.pitch = aFloat)
+				.setRequirement(enabledEntry::getValue)
+				.build();
+
+		FloatListEntry volumeEntry = entryBuilder
+				.startFloatField(
+						Component.translatable("durability_alert.config.volume"),
+						Config.INSTANCE.volume
+				)
+				.setDefaultValue(1)
+				.setSaveConsumer(aFloat -> Config.INSTANCE.volume = aFloat)
+				.setRequirement(enabledEntry::getValue)
+				.build();
+
         BooleanListEntry checkArmorPiecesEntry = entryBuilder
                 .startBooleanToggle(
                         Component.translatable("durability_alert.config.check_armor_pieces"),
@@ -158,6 +178,8 @@ public class ClothConfigCompat {
         general.addEntry(thresholdSlider);
         general.addEntry(alertTypeEntry);
         general.addEntry(soundEntry);
+		general.addEntry(pitchEntry);
+		general.addEntry(volumeEntry);
         general.addEntry(checkArmorPiecesEntry);
         general.addEntry(checkElytraOnlyEntry);
         general.addEntry(minAlertIntervalSecondsField);

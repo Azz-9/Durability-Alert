@@ -61,7 +61,7 @@ public class CommonClass {
 				player.sendOverlayMessage(message);
 			}
 			if (Config.INSTANCE.alertType != Config.AlertType.MESSAGE) {
-				MINECRAFT.getSoundManager().play(SimpleSoundInstance.forUI(Config.INSTANCE.sound, 2.0f));
+				MINECRAFT.getSoundManager().play(SimpleSoundInstance.forUI(Config.INSTANCE.sound, Config.INSTANCE.pitch, Config.INSTANCE.volume));
 			}
 		}
 	}

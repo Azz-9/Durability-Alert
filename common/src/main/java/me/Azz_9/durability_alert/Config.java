@@ -1,17 +1,20 @@
 package me.Azz_9.durability_alert;
 
+import static me.Azz_9.durability_alert.Constants.MOD_ID;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import me.Azz_9.durability_alert.platform.Services;
+
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
+
 import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
@@ -22,7 +25,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.Azz_9.durability_alert.Constants.MOD_ID;
+import me.Azz_9.durability_alert.platform.Services;
 
 public class Config {
 
@@ -75,6 +78,8 @@ public class Config {
     public int threshold = 10;
     public AlertType alertType = AlertType.SOUND_AND_MESSAGE;
     public SoundEvent sound = SoundEvents.ANVIL_LAND;
+	public float pitch = 2.0f; // 0.5..2
+	public float volume = 1.0f; // 0..1
     public boolean checkArmorPieces = true;
     public boolean checkElytraOnly = false;
     public int minAlertIntervalSeconds = 60;
