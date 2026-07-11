@@ -49,6 +49,8 @@ The config file is located at `.minecraft/config/durability_alert.json` and is c
 | `threshold`               | Integer    | `10`                         | Durability percentage below which an alert is triggered.                        |
 | `alertType`               | Enum       | `SOUND_AND_MESSAGE`          | Alert mode: sound, message, or both.                                            |
 | `sound`                   | SoundEvent | `minecraft:block.anvil.land` | Sound played when an alert is triggered.                                        |
+| `pitch`                   | float      | `2.0`                        | Pitch of the alert sound.                                                       |
+| `volume`                  | float      | `1.0`                        | Volume of the alert sound.                                                      |
 | `checkArmorPieces`        | Boolean    | `true`                       | Enables durability alerts for equipped armor pieces.                            |
 | `checkElytraOnly`         | Boolean    | `false`                      | Only checks Elytras among armor slots when armor checking is not fully enabled. |
 | `minAlertIntervalSeconds` | Integer    | `60`                         | Minimum delay between two alerts for the same item type.                        |
