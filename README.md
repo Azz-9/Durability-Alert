@@ -3,7 +3,7 @@
 ![Fabric](https://img.shields.io/badge/Loader-Fabric-blue)
 ![NeoForge](https://img.shields.io/badge/Loader-NeoForge-orange)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow)
-![Side: Client](https://img.shields.io/badge/Side-Client-red)
+![Environment: Client](https://img.shields.io/badge/Environment-Client-red)
 
 Receive a sound and/or message alert when your gear drops below a configurable durability threshold.
 
