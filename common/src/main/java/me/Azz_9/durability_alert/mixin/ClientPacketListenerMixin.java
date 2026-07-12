@@ -33,10 +33,12 @@ public abstract class ClientPacketListenerMixin {
                 || stack.isEmpty() || !stack.isDamageableItem())
             return;
 
-		int newDamageValue = stack.getDamageValue();
-		int old = MINECRAFT.player.inventoryMenu.getSlot(packet.getSlot()).getItem().getDamageValue();
+		ItemStack oldStack = MINECRAFT.player.inventoryMenu.getSlot(packet.getSlot()).getItem();
 
-		if (newDamageValue <= old) return;
+		int newDamageValue = stack.getDamageValue();
+		int oldDamageValue = oldStack.getDamageValue();
+
+		if (!stack.is(oldStack.getItem()) || !oldStack.isDamageableItem() || newDamageValue <= oldDamageValue) return;
 
         boolean isListed = Config.INSTANCE.itemList.contains(stack.getItem());
         boolean passesList = switch (Config.INSTANCE.listType) {
