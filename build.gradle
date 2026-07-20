@@ -105,11 +105,9 @@ publishMods {
 	github {
 		accessToken = providers.gradleProperty("GITHUB_TOKEN")
 		repository = "Azz-9/${rootProject.name}"
-		tagName = providers.gradleProperty("github_tag")
-				.orElse("v${simpleModVersion}")
-		commitish = providers.gradleProperty("github_commitish")
-				.orElse("main")
 
+		commitish = providers.gradleProperty("github_commitish")
+		tagName = "v${simpleModVersion}"
 
 		// Tous les JAR sont passés comme fichiers supplémentaires.
 		additionalFiles.from(
@@ -139,6 +137,8 @@ publishMods {
 		setPlatforms(
 				publishMods.platforms.modrinthFabric,
 				publishMods.platforms.curseforgeFabric,
+				publishMods.platforms.modrinthNeoForge,
+				publishMods.platforms.curseforgeNeoForge,
 				publishMods.platforms.github
 		)
 	}
