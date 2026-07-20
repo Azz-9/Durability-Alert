@@ -311,7 +311,8 @@ try
     Invoke-Gradle @(
         "announceDiscord",
         "-Prelease_jars_dir=$releaseDirectory",
-        "-Pgithub_commitish=$ReleaseBranch"
+        "-Pgithub_commitish=$ReleaseBranch",
+        "-Pgithub_tag_name=$tagName"
     )
 
     if (Test-Path $releaseDirectory)

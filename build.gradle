@@ -65,7 +65,7 @@ publishMods {
 	}
 
 	curseforge("curseforgeFabric") {
-		announcementTitle = "Download from CurseForge"
+		announcementTitle = "CurseForge Fabric"
 		from cf
 		file project(":fabric")
 		modLoaders.add("fabric")
@@ -75,7 +75,7 @@ publishMods {
 	}
 
 	curseforge("curseforgeNeoForge") {
-		announcementTitle = "Download from CurseForge"
+		announcementTitle = "CurseForge NeoForge"
 		from cf
 		file project(":neoforge")
 		modLoaders.add("neoforge")
@@ -84,7 +84,7 @@ publishMods {
 	}
 
 	modrinth("modrinthFabric") {
-		announcementTitle = "Download from Modrinth"
+		announcementTitle = "Modrinth Fabric"
 		from mr
 		file project(":fabric")
 		modLoaders.add("fabric")
@@ -94,7 +94,7 @@ publishMods {
 	}
 
 	modrinth("modrinthNeoForge") {
-		announcementTitle = "Download from Modrinth"
+		announcementTitle = "Modrinth NeoForge"
 		from mr
 		file project(":neoforge")
 		modLoaders.add("neoforge")
@@ -107,7 +107,7 @@ publishMods {
 		repository = "Azz-9/${rootProject.name}"
 
 		commitish = providers.gradleProperty("github_commitish")
-		tagName = "v${simpleModVersion}"
+		tagName = providers.gradleProperty("github_tag_name")
 
 		// Tous les JAR sont passés comme fichiers supplémentaires.
 		additionalFiles.from(
