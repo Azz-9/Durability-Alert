@@ -192,7 +192,8 @@ try
 
         Invoke-Gradle @(
             "clean",
-            "build",
+            ":fabric:jar",
+            ":neoforge:jar",
             "publishMods",
             "-Ppublish_target=platforms"
         )
