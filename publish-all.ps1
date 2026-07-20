@@ -267,7 +267,6 @@ try
 
     Invoke-Git @(
         "tag",
-        "-a",
         $tagName
     )
 
@@ -305,6 +304,11 @@ try
         "announceDiscord",
         "-Ppublish_target=discord"
     )
+
+    if (Test-Path $releaseDirectory)
+    {
+        Remove-Item $releaseDirectory -Recurse -Force
+    }
 
     Write-Host ""
     Write-Host "Release successfully published."
