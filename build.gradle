@@ -32,6 +32,15 @@ publishMods {
 			layout.projectDirectory.file("CHANGELOG.md")
 	).asText
 
+	type = switch (version_type) {
+		case "alpha" -> ALPHA
+		case "beta" -> BETA
+		case "stable" -> STABLE
+		default -> throw new GradleException(
+				"Unknown release type: ${version_type}"
+		)
+	}
+
 	if (publishTarget == "platforms") {
 		def cf = curseforgeOptions {
 			projectId = "1596605"
@@ -55,14 +64,6 @@ publishMods {
 				start = minecraft_version_start
 				end = minecraft_version_end
 			}
-			type = switch (version_type) {
-				case "alpha" -> ALPHA
-				case "beta" -> BETA
-				case "stable" -> STABLE
-				default -> throw new GradleException(
-						"Unknown release type: ${version_type}"
-				)
-			}
 
 			environment = CLIENT_ONLY
 		}
@@ -72,7 +73,6 @@ publishMods {
 			from cf
 			file project(":fabric")
 			modLoaders.add("fabric")
-			requires("fabric-api")
 			displayName = "${mod_name} ${mod_version} Fabric"
 			optional("modmenu")
 			optional("cloth-config")
@@ -92,7 +92,6 @@ publishMods {
 			from mr
 			file project(":fabric")
 			modLoaders.add("fabric")
-			requires("fabric-api")
 			displayName = "${mod_name} ${mod_version} Fabric"
 			optional("modmenu")
 			optional("cloth-config")
@@ -113,9 +112,10 @@ publishMods {
 			accessToken = providers.environmentVariable("GITHUB_TOKEN")
 			repository = "Azz-9/${rootProject.name}"
 			tagName = providers.gradleProperty("github_tag")
-					.orElse("v${mod_version}")
+					.orElse("v${simpleModVersion}")
 			commitish = providers.gradleProperty("github_commitish")
 					.orElse("main")
+
 
 			// Tous les JAR sont passés comme fichiers supplémentaires.
 			additionalFiles.from(
