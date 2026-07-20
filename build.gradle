@@ -108,6 +108,7 @@ publishMods {
 
 		commitish = providers.gradleProperty("github_commitish")
 		tagName = providers.gradleProperty("github_tag_name")
+		type = STABLE
 
 		// Tous les JAR sont passés comme fichiers supplémentaires.
 		additionalFiles.from(
@@ -138,8 +139,7 @@ publishMods {
 				publishMods.platforms.modrinthFabric,
 				publishMods.platforms.curseforgeFabric,
 				publishMods.platforms.modrinthNeoForge,
-				publishMods.platforms.curseforgeNeoForge,
-				publishMods.platforms.github
+				publishMods.platforms.curseforgeNeoForge
 		)
 	}
 }

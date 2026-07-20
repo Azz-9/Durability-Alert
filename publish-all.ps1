@@ -306,13 +306,20 @@ try
     )
 
     Write-Host ""
-    Write-Host "Publishing the release branch, creating the GitHub release and sending the Discord announcement..."
+    Write-Host "Publishing the release branch and creating the GitHub release..."
 
     Invoke-Gradle @(
-        "announceDiscord",
+        "publishGithub",
         "-Prelease_jars_dir=$releaseDirectory",
         "-Pgithub_commitish=$ReleaseBranch",
         "-Pgithub_tag_name=$tagName"
+    )
+
+    Write-Host ""
+    Write-Host "Publishing the release branch to Modrinth/CurseForge and sending the Discord announcement..."
+
+    Invoke-Gradle @(
+        "announceDiscord"
     )
 
     if (Test-Path $releaseDirectory)
