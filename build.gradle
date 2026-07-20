@@ -109,7 +109,7 @@ publishMods {
 
 	if (publishTarget == "github") {
 		github {
-			accessToken = providers.environmentVariable("GITHUB_TOKEN")
+			accessToken = providers.gradleProperty("GITHUB_TOKEN")
 			repository = "Azz-9/${rootProject.name}"
 			tagName = providers.gradleProperty("github_tag")
 					.orElse("v${simpleModVersion}")
