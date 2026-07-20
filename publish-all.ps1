@@ -11,6 +11,9 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+$repositoryDirectory = $PSScriptRoot
+$releaseDirectory = Join-Path $repositoryDirectory "release-jars"
+
 function Get-GradleProperty
 {
     param(
@@ -119,6 +122,8 @@ function Test-RemoteGitTagExists
         "refs/tags/$TagName" *> $null
 
     $exitCode = $LASTEXITCODE
+
+    # Empêche le code 2 attendu de perturber la commande suivante.
     $global:LASTEXITCODE = 0
 
     switch ($exitCode)
@@ -137,8 +142,49 @@ function Test-RemoteGitTagExists
     }
 }
 
-$repositoryDirectory = $PSScriptRoot
-$releaseDirectory = Join-Path $repositoryDirectory "release-jars"
+function Get-ReleaseJar
+{
+    param(
+        [Parameter(Mandatory = $true)]
+        [string] $Directory,
+
+        [Parameter(Mandatory = $true)]
+        [string] $Loader,
+
+        [Parameter(Mandatory = $true)]
+        [string] $Branch
+    )
+
+    $jars = @(
+    Get-ChildItem `
+            -Path $Directory `
+            -Filter "*.jar" |
+            Where-Object {
+                $_.Name -notmatch "(?i)-(sources|javadoc|dev|shadow|all)\.jar$"
+            }
+    )
+
+    if ($jars.Count -ne 1)
+    {
+        $foundFiles = if ($jars.Count -eq 0)
+        {
+            "none"
+        }
+        else
+        {
+            $jars.Name -join ", "
+        }
+
+        throw "Expected exactly one distributable $Loader JAR for branch '$Branch', found $( $jars.Count ): $foundFiles"
+    }
+
+    return $jars[0]
+}
+
+if ($ReleaseBranch -notin $Branches)
+{
+    throw "Release branch '$ReleaseBranch' must be present in the Branches list."
+}
 
 $initialBranch = (
 git -C $repositoryDirectory branch --show-current
@@ -149,21 +195,6 @@ if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($initialBranch))
     throw "Unable to determine the current Git branch."
 }
 
-function Invoke-Gradle
-{
-    param(
-        [Parameter(Mandatory = $true)]
-        [string[]] $Arguments
-    )
-
-    & "$repositoryDirectory\gradlew.bat" @Arguments
-
-    if ($LASTEXITCODE -ne 0)
-    {
-        throw "Gradle failed: gradlew $( $Arguments -join ' ' )"
-    }
-}
-
 try
 {
     if (Test-Path $releaseDirectory)
@@ -171,13 +202,16 @@ try
         Remove-Item $releaseDirectory -Recurse -Force
     }
 
-    New-Item -ItemType Directory -Path $releaseDirectory | Out-Null
+    New-Item `
+        -ItemType Directory `
+        -Path $releaseDirectory |
+            Out-Null
 
     foreach ($branch in $Branches)
     {
         Write-Host ""
         Write-Host "========================================"
-        Write-Host "Publishing Minecraft branch: $branch"
+        Write-Host "Processing Minecraft branch: $branch"
         Write-Host "========================================"
 
         Invoke-Git @(
@@ -185,49 +219,56 @@ try
             $branch
         )
 
-        if ($LASTEXITCODE -ne 0)
+        if ($branch -eq $ReleaseBranch)
         {
-            throw "Unable to switch to branch '$branch'."
+            Write-Host "Building release branch without publishing yet..."
+
+            # Cette branche sera publiée plus tard par announceDiscord,
+            # car elle fait partie de setPlatforms(...).
+            Invoke-Gradle @(
+                "clean",
+                ":fabric:jar",
+                ":neoforge:jar"
+            )
+        }
+        else
+        {
+            Write-Host "Building and publishing Modrinth/CurseForge..."
+
+            Invoke-Gradle @(
+                "clean",
+                ":fabric:jar",
+                ":neoforge:jar",
+                "publishModrinthFabric",
+                "publishCurseforgeFabric",
+                "publishModrinthNeoForge",
+                "publishCurseforgeNeoForge"
+            )
         }
 
-        Invoke-Gradle @(
-            "clean",
-            ":fabric:jar",
-            ":neoforge:jar",
-            "publishModrinthFabric",
-            "publishCurseforgeFabric",
-            "publishModrinthNeoForge",
-            "publishCurseforgeNeoForge"
-        )
-
-        $fabricJars = Get-ChildItem `
-            -Path "$repositoryDirectory\fabric\build\libs" `
-            -Filter "*.jar" |
-                Where-Object {
-                    $_.Name -notmatch "-sources\.jar$" -and
-                            $_.Name -notmatch "-dev\.jar$"
-                }
-
-        $neoForgeJars = Get-ChildItem `
-            -Path "$repositoryDirectory\neoforge\build\libs" `
-            -Filter "*.jar" |
-                Where-Object {
-                    $_.Name -notmatch "-sources\.jar$" -and
-                            $_.Name -notmatch "-dev\.jar$"
-                }
-
-        if ($fabricJars.Count -ne 1)
+        if ($DryRun)
         {
-            throw "Expected exactly one Fabric JAR for branch '$branch', found $( $fabricJars.Count )."
+            Write-Host "DRY RUN: collect Fabric and NeoForge JARs for branch '$branch'"
+            continue
         }
 
-        if ($neoForgeJars.Count -ne 1)
-        {
-            throw "Expected exactly one NeoForge JAR for branch '$branch', found $( $neoForgeJars.Count )."
-        }
+        $fabricJar = Get-ReleaseJar `
+            -Directory "$repositoryDirectory\fabric\build\libs" `
+            -Loader "Fabric" `
+            -Branch $branch
 
-        Copy-Item $fabricJars[0].FullName $releaseDirectory
-        Copy-Item $neoForgeJars[0].FullName $releaseDirectory
+        $neoForgeJar = Get-ReleaseJar `
+            -Directory "$repositoryDirectory\neoforge\build\libs" `
+            -Loader "NeoForge" `
+            -Branch $branch
+
+        Copy-Item `
+            -Path $fabricJar.FullName `
+            -Destination $releaseDirectory
+
+        Copy-Item `
+            -Path $neoForgeJar.FullName `
+            -Destination $releaseDirectory
     }
 
     Write-Host ""
@@ -238,21 +279,10 @@ try
         $ReleaseBranch
     )
 
-    if ($LASTEXITCODE -ne 0)
-    {
-        throw "Unable to switch to release branch '$ReleaseBranch'."
-    }
-
     $modVersion = (Get-GradleProperty "mod_version").Split("-", 2)[0]
     $tagName = "v$modVersion"
 
     Write-Host "Creating Git tag '$tagName' on branch '$ReleaseBranch'..."
-
-    Invoke-Git @(
-        "tag",
-        "--list",
-        $tagName
-    )
 
     if (Test-LocalGitTagExists -TagName $tagName)
     {
@@ -264,18 +294,10 @@ try
         throw "The remote tag '$tagName' already exists."
     }
 
-    # ls-remote renvoie 2 quand le tag n'existe pas, ce qui est attendu.
-    $global:LASTEXITCODE = 0
-
     Invoke-Git @(
         "tag",
         $tagName
     )
-
-    if ($LASTEXITCODE -ne 0)
-    {
-        throw "Unable to create tag '$tagName'."
-    }
 
     Invoke-Git @(
         "push",
@@ -283,26 +305,13 @@ try
         $tagName
     )
 
-    if ($LASTEXITCODE -ne 0)
-    {
-        throw "Unable to push tag '$tagName'."
-    }
-
     Write-Host ""
-    Write-Host "Creating the single GitHub release..."
+    Write-Host "Publishing the release branch, creating the GitHub release and sending the Discord announcement..."
 
     Invoke-Gradle @(
-        "publishGithub",
+        "announceDiscord",
         "-Prelease_jars_dir=$releaseDirectory",
-        "-Pgithub_tag=$tagName",
         "-Pgithub_commitish=$ReleaseBranch"
-    )
-
-    Write-Host ""
-    Write-Host "Sending the Discord announcement..."
-
-    Invoke-Gradle @(
-        "announceDiscord"
     )
 
     if (Test-Path $releaseDirectory)
@@ -318,5 +327,17 @@ finally
     Write-Host ""
     Write-Host "Returning to branch '$initialBranch'..."
 
-    git -C $repositoryDirectory switch $initialBranch
+    if ($DryRun)
+    {
+        Write-Host "DRY RUN: git switch $initialBranch"
+    }
+    else
+    {
+        & git -C $repositoryDirectory switch $initialBranch
+
+        if ($LASTEXITCODE -ne 0)
+        {
+            Write-Warning "Unable to return to initial branch '$initialBranch'."
+        }
+    }
 }
