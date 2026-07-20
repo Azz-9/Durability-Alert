@@ -194,8 +194,10 @@ try
             "clean",
             ":fabric:jar",
             ":neoforge:jar",
-            "publishMods",
-            "-Ppublish_target=platforms"
+            "publishModrinthFabric",
+            "publishCurseforgeFabric",
+            "publishModrinthNeoForge",
+            "publishCurseforgeNeoForge"
         )
 
         $fabricJars = Get-ChildItem `
@@ -291,7 +293,6 @@ try
 
     Invoke-Gradle @(
         "publishGithub",
-        "-Ppublish_target=github",
         "-Prelease_jars_dir=$releaseDirectory",
         "-Pgithub_tag=$tagName",
         "-Pgithub_commitish=$ReleaseBranch"
@@ -301,8 +302,7 @@ try
     Write-Host "Sending the Discord announcement..."
 
     Invoke-Gradle @(
-        "announceDiscord",
-        "-Ppublish_target=discord"
+        "announceDiscord"
     )
 
     if (Test-Path $releaseDirectory)

@@ -16,10 +16,6 @@ allprojects {
 	}
 }
 
-def publishTarget = providers.gradleProperty("publish_target")
-		.orElse("platforms")
-		.get()
-
 def releaseJarsDirectory = providers.gradleProperty("release_jars_dir")
 		.map { file(it) }
 		.orElse(layout.projectDirectory.dir("release-jars").asFile)
@@ -41,113 +37,109 @@ publishMods {
 		)
 	}
 
-	if (publishTarget == "platforms") {
-		def cf = curseforgeOptions {
-			projectId = "1596605"
-			projectSlug = "durabilityalert"
-			accessToken = providers.gradleProperty("CURSEFORGE_TOKEN")
-			minecraftVersionRange {
-				start = start = minecraft_version_start
-				end = minecraft_version_end
-			}
-			changelogType = "markdown"
-			type = STABLE
 
-			client = true
-			server = false
+	def cf = curseforgeOptions {
+		projectId = "1596605"
+		projectSlug = "durabilityalert"
+		accessToken = providers.gradleProperty("CURSEFORGE_TOKEN")
+		minecraftVersionRange {
+			start = start = minecraft_version_start
+			end = minecraft_version_end
 		}
+		changelogType = "markdown"
+		type = STABLE
 
-		def mr = modrinthOptions {
-			projectId = "o16neCJJ"
-			accessToken = providers.gradleProperty("MODRINTH_TOKEN")
-			minecraftVersionRange {
-				start = minecraft_version_start
-				end = minecraft_version_end
-			}
-
-			environment = CLIENT_ONLY
-		}
-
-		curseforge("curseforgeFabric") {
-			announcementTitle = "Download from CurseForge"
-			from cf
-			file project(":fabric")
-			modLoaders.add("fabric")
-			displayName = "${mod_name} ${mod_version} Fabric"
-			optional("modmenu")
-			optional("cloth-config")
-		}
-
-		curseforge("curseforgeNeoForge") {
-			announcementTitle = "Download from CurseForge"
-			from cf
-			file project(":neoforge")
-			modLoaders.add("neoforge")
-			displayName = "${mod_name} ${mod_version} NeoForge"
-			optional("cloth-config")
-		}
-
-		modrinth("modrinthFabric") {
-			announcementTitle = "Download from Modrinth"
-			from mr
-			file project(":fabric")
-			modLoaders.add("fabric")
-			displayName = "${mod_name} ${mod_version} Fabric"
-			optional("modmenu")
-			optional("cloth-config")
-		}
-
-		modrinth("modrinthNeoForge") {
-			announcementTitle = "Download from Modrinth"
-			from mr
-			file project(":neoforge")
-			modLoaders.add("neoforge")
-			displayName = "${mod_name} ${mod_version} NeoForge"
-			optional("cloth-config")
-		}
+		client = true
+		server = false
 	}
 
-	if (publishTarget == "github") {
-		github {
-			accessToken = providers.gradleProperty("GITHUB_TOKEN")
-			repository = "Azz-9/${rootProject.name}"
-			tagName = providers.gradleProperty("github_tag")
-					.orElse("v${simpleModVersion}")
-			commitish = providers.gradleProperty("github_commitish")
-					.orElse("main")
-
-
-			// Tous les JAR sont passés comme fichiers supplémentaires.
-			additionalFiles.from(
-					fileTree(releaseJarsDirectory) {
-						include("*.jar")
-					}
-			)
-
-			// Aucun fichier principal : les fichiers sont dans additionalFiles.
-			allowEmptyFiles = true
-
-			announcementTitle = "Download from GitHub"
+	def mr = modrinthOptions {
+		projectId = "o16neCJJ"
+		accessToken = providers.gradleProperty("MODRINTH_TOKEN")
+		minecraftVersionRange {
+			start = minecraft_version_start
+			end = minecraft_version_end
 		}
+
+		environment = CLIENT_ONLY
 	}
 
-	if (publishTarget == "discord") {
-		discord {
-			webhookUrl = providers.gradleProperty("DISCORD_MOD_DURABILITY_ALERT_PUBLISH_WEBHOOK")
-			username = mod_name
+	curseforge("curseforgeFabric") {
+		announcementTitle = "Download from CurseForge"
+		from cf
+		file project(":fabric")
+		modLoaders.add("fabric")
+		displayName = "${mod_name} ${mod_version} Fabric"
+		optional("modmenu")
+		optional("cloth-config")
+	}
 
-			avatarUrl = "https://raw.githubusercontent.com/Azz-9/${rootProject.name}/26.2/common/src/main/resources/${mod_id}.png"
-			content = changelog.map {
-				"""
-				## ${mod_name} ${simpleModVersion} is now available!
-	
-				${it}
-				""".stripIndent()
-			}
-			setPlatforms(
-					publishMods.platforms.modrinth,
-					publishMods.platforms.curseforge
-			)
+	curseforge("curseforgeNeoForge") {
+		announcementTitle = "Download from CurseForge"
+		from cf
+		file project(":neoforge")
+		modLoaders.add("neoforge")
+		displayName = "${mod_name} ${mod_version} NeoForge"
+		optional("cloth-config")
+	}
+
+	modrinth("modrinthFabric") {
+		announcementTitle = "Download from Modrinth"
+		from mr
+		file project(":fabric")
+		modLoaders.add("fabric")
+		displayName = "${mod_name} ${mod_version} Fabric"
+		optional("modmenu")
+		optional("cloth-config")
+	}
+
+	modrinth("modrinthNeoForge") {
+		announcementTitle = "Download from Modrinth"
+		from mr
+		file project(":neoforge")
+		modLoaders.add("neoforge")
+		displayName = "${mod_name} ${mod_version} NeoForge"
+		optional("cloth-config")
+	}
+
+	github {
+		accessToken = providers.gradleProperty("GITHUB_TOKEN")
+		repository = "Azz-9/${rootProject.name}"
+		tagName = providers.gradleProperty("github_tag")
+				.orElse("v${simpleModVersion}")
+		commitish = providers.gradleProperty("github_commitish")
+				.orElse("main")
+
+
+		// Tous les JAR sont passés comme fichiers supplémentaires.
+		additionalFiles.from(
+				fileTree(releaseJarsDirectory) {
+					include("*.jar")
+				}
+		)
+
+		// Aucun fichier principal : les fichiers sont dans additionalFiles.
+		allowEmptyFiles = true
+
+		announcementTitle = "Download from GitHub"
+	}
+
+	discord {
+		webhookUrl = providers.gradleProperty("DISCORD_MOD_DURABILITY_ALERT_PUBLISH_WEBHOOK")
+		username = mod_name
+
+		avatarUrl = "https://raw.githubusercontent.com/Azz-9/${rootProject.name}/26.2/common/src/main/resources/${mod_id}.png"
+		content = changelog.map {
+			"""
+			## ${mod_name} ${simpleModVersion} is now available!
+
+			${it}
+			""".stripIndent()
 		}
+		setPlatforms(
+				publishMods.platforms.modrinthFabric,
+				publishMods.platforms.curseforgeFabric,
+				publishMods.platforms.github
+		)
 	}
 }
