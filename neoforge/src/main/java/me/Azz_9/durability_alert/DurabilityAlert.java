@@ -43,7 +43,7 @@ public class DurabilityAlert {
                         );
                         return null;
                     }
-                    return (container, parent) -> ClothConfigCompat.buildClothConfigScreen(parent);
+					return (_, parent) -> ClothConfigCompat.buildClothConfigScreen(parent);
                 }
         );
     }

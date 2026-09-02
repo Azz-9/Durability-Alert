@@ -1,5 +1,7 @@
 package me.Azz_9.durability_alert.platform.services;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.nio.file.Path;
 
 public interface IPlatformHelper {
@@ -9,7 +11,7 @@ public interface IPlatformHelper {
      *
      * @return The name of the current platform.
      */
-    String getPlatformName();
+	@NotNull String getPlatformName();
 
     /**
      * Checks if a mod with the given id is loaded.
@@ -17,7 +19,7 @@ public interface IPlatformHelper {
      * @param modId The mod to check if it is loaded.
      * @return True if the mod is loaded, false otherwise.
      */
-    boolean isModLoaded(String modId);
+	boolean isModLoaded(@NotNull String modId);
 
     /**
      * Check if the game is currently in a development environment.
@@ -31,9 +33,9 @@ public interface IPlatformHelper {
      *
      * @return The name of the environment type.
      */
-    default String getEnvironmentName() {
+	default @NotNull String getEnvironmentName() {
         return isDevelopmentEnvironment() ? "development" : "production";
     }
 
-    Path getConfigDir();
+	@NotNull Path getConfigDir();
 }
