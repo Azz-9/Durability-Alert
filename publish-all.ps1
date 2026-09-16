@@ -1,7 +1,7 @@
 param(
     [string[]] $Branches = @(
     "26.1",
-    "26.2"
+    "26.2-26.3"
 ),
 
     [string] $ReleaseBranch = "26.2",
